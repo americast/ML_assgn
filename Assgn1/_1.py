@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import math
 import matplotlib.pyplot as plt
 
 def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
@@ -26,16 +27,17 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 
 	train_error = []
 	test_error = []
+	rmse_error = []
 
 	for DEGREE in range(1, 10):
 		print("\nDegree: "+str(DEGREE))
 		W = np.random.uniform(0, 1, DEGREE + 1)
 
 		for i in range(MAX_ITER):
-
 			cost = 0.0
 			cost_val = 0.0
 			sum_ = 0.0
+			rmse = 0.0
 			sum_list = np.zeros(DEGREE + 1)
 			for m in range(len(X_train)):
 				X = X_train[m]
@@ -62,14 +64,17 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 				Y_pred = np.dot(W, X_power)
 
 				cost_val += (Y - Y_pred)**2
+				rmse += (Y - Y_pred)**2
 
 			cost_val /= 2* (m+1)
+			rmse = math.sqrt(rmse)
 
 		train_error.append(cost)
 		test_error.append(cost_val)
+		rmse_error.append(rmse)
 		np.save("W_"+str(DEGREE), W)
 
-	return train_error, test_error
+	return train_error, test_error, rmse_error
 
 if __name__ == "__main__":
 	train_error, test_error = train()
