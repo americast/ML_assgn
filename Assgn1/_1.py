@@ -4,7 +4,7 @@ import math
 import matplotlib.pyplot as plt
 import sys
 
-def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
+def generate_data(NUM_DATA = 10):
 
 	X = np.random.uniform(0, 1, NUM_DATA)
 
@@ -14,6 +14,11 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 	Y = np.sin(2 * np.pi * X) + noise
 
 	cutoff = int(0.8 * NUM_DATA)
+
+	perm = np.random.permutation(NUM_DATA)
+
+	X = X[perm]
+	Y = Y[perm]
 
 	X_test = X[cutoff:]
 	Y_test = Y[cutoff:]
@@ -25,6 +30,14 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 	np.save("X_test", X_test)
 	np.save("Y_train", Y_train)
 	np.save("Y_test", Y_test)
+	
+
+def train(MAX_ITER = 5000, ALPHA = 0.05):
+
+	X_train = np.load("X_train.npy")
+	X_test = np.load("X_test.npy")
+	Y_train = np.load("Y_train.npy")
+	Y_test = np.load("Y_test.npy")
 
 	train_error = []
 	test_error = []
@@ -68,7 +81,7 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 				rmse += (Y - Y_pred)**2
 
 			cost_val /= 2* (m+1)
-			rmse = math.sqrt(rmse)
+			rmse = math.sqrt(float(rmse / (m + 1)))
 
 		train_error.append(cost)
 		test_error.append(cost_val)
@@ -79,8 +92,10 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 
 if __name__ == "__main__":
 	if (len(sys.argv) > 1):
-		train_error, test_error, rmse_error = train(int(sys.argv[1]))
+		generate_data(int(sys.argv[1]))
+		train_error, test_error, rmse_error = train()
 	else:
+		generate_data()
 		train_error, test_error, rmse_error = train()
 	print(train_error)
 	print(test_error)

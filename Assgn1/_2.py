@@ -1,13 +1,14 @@
 import _1
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
-X_train = np.load("X_train.npy")
-X_test = np.load("X_test.npy")
-Y_train = np.load("Y_train.npy")
-Y_test = np.load("Y_test.npy")
 
 def plot(show_fig = True):
+	X_train = np.load("X_train.npy")
+	X_test = np.load("X_test.npy")
+	Y_train = np.load("Y_train.npy")
+	Y_test = np.load("Y_test.npy")
 
 	X_train_cost = []
 	X_test_cost = []
@@ -18,7 +19,11 @@ def plot(show_fig = True):
 	line_3 = 0
 
 	for DEGREE in range(1, 10):
-		W = np.load("W_"+str(DEGREE)+".npy")
+		try:
+			W = np.load("W_"+str(DEGREE)+".npy")
+		except:
+			print("Please run part 1 to generate weights.")
+			sys.exit(1)
 		cost = 0.0
 		for m in range(len(X_test)):
 			X = X_test[m]
@@ -83,7 +88,11 @@ def plot(show_fig = True):
 def call_plotter(show_fig = True):
 	a = input("Would you like to train (part 1) again? ")
 	if (a[0] == 'y' or a[0] == 'Y'):
+		a = input("Would you like to regenerate the data? ")
+		if (a[0] == 'y' or a[0] == 'Y'):
+			_1.generate_data()
 		_1.train()
+		print("\n")
 	return plot(show_fig)
 
 if __name__ == "__main__":

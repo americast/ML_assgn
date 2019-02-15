@@ -5,27 +5,12 @@ import math
 import random
 import matplotlib.pyplot as plt
 
-def train_abs(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
+def train_abs(MAX_ITER = 5000, ALPHA = 0.05):
 
-	X = np.random.uniform(0, 1, NUM_DATA)
-
-
-	noise = np.random.normal(0, 0.3, NUM_DATA)
-
-	Y = np.sin(2 * np.pi * X) + noise
-
-	cutoff = int(0.8 * NUM_DATA)
-
-	X_test = X[cutoff:]
-	Y_test = Y[cutoff:]
-
-	X_train = X[:cutoff]
-	Y_train = Y[:cutoff]
-
-	np.save("X_train", X_train)
-	np.save("X_test", X_test)
-	np.save("Y_train", Y_train)
-	np.save("Y_test", Y_test)
+	X_train = np.load("X_train.npy")
+	X_test = np.load("X_test.npy")
+	Y_train = np.load("Y_train.npy")
+	Y_test = np.load("Y_test.npy")
 
 	train_error = []
 	test_error = []
@@ -81,27 +66,12 @@ def train_abs(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 	return train_error, test_error, rmse_error
 
 
-def train_fourth(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
+def train_fourth(MAX_ITER = 5000, ALPHA = 0.05):
 
-	X = np.random.uniform(0, 1, NUM_DATA)
-
-
-	noise = np.random.normal(0, 0.3, NUM_DATA)
-
-	Y = np.sin(2 * np.pi * X) + noise
-
-	cutoff = int(0.8 * NUM_DATA)
-
-	X_test = X[cutoff:]
-	Y_test = Y[cutoff:]
-
-	X_train = X[:cutoff]
-	Y_train = Y[:cutoff]
-
-	np.save("X_train", X_train)
-	np.save("X_test", X_test)
-	np.save("Y_train", Y_train)
-	np.save("Y_test", Y_test)
+	X_train = np.load("X_train.npy")
+	X_test = np.load("X_test.npy")
+	Y_train = np.load("Y_train.npy")
+	Y_test = np.load("Y_test.npy")
 
 	train_error = []
 	test_error = []
@@ -109,7 +79,7 @@ def train_fourth(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 
 	for DEGREE in range(1, 10):
 		print("\nDegree: "+str(DEGREE))
-		W = np.random.uniform(0, 0.01, DEGREE + 1)
+		W = np.random.uniform(0, 0.001, DEGREE + 1)
 
 		for i in range(MAX_ITER):
 
@@ -162,25 +132,26 @@ if __name__ == "__main__":
 	# For RMSE of squared error
 	X_test_rmse = []
 	X_axis = [0.025, 0.05, 0.1, 0.2, 0.5]
+	_1.generate_data(100)
 	print("\nSquared error loss\n")
 
-	train_error, test_error, rmse_error = _1.train(100, 500, 0.025)
+	train_error, test_error, rmse_error = _1.train(500, 0.025)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = _1.train(100, 500, 0.05)
+	train_error, test_error, rmse_error = _1.train(500, 0.05)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = _1.train(100, 500, 0.1)
+	train_error, test_error, rmse_error = _1.train(500, 0.1)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = _1.train(100, 500, 0.2)
+	train_error, test_error, rmse_error = _1.train(500, 0.2)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = _1.train(100, 500, 0.5)
+	train_error, test_error, rmse_error = _1.train(500, 0.5)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
@@ -190,23 +161,23 @@ if __name__ == "__main__":
 	# For RMSE of absolute error
 	X_test_rmse = []
 
-	train_error, test_error, rmse_error = train_abs(100, 500, 0.025)
+	train_error, test_error, rmse_error = train_abs(500, 0.025)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_abs(100, 500, 0.05)
+	train_error, test_error, rmse_error = train_abs(500, 0.05)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_abs(100, 500, 0.1)
+	train_error, test_error, rmse_error = train_abs(500, 0.1)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_abs(100, 500, 0.2)
+	train_error, test_error, rmse_error = train_abs(500, 0.2)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_abs(100, 500, 0.5)
+	train_error, test_error, rmse_error = train_abs(500, 0.5)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
@@ -216,23 +187,23 @@ if __name__ == "__main__":
 	print("\nFourth power loss loss\n")
 	X_test_rmse = []
 
-	train_error, test_error, rmse_error = train_fourth(100, 500, 0.025)
+	train_error, test_error, rmse_error = train_fourth(500, 0.025)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_fourth(100, 500, 0.05)
+	train_error, test_error, rmse_error = train_fourth(500, 0.05)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_fourth(100, 500, 0.1)
+	train_error, test_error, rmse_error = train_fourth(500, 0.1)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_fourth(100, 500, 0.2)
+	train_error, test_error, rmse_error = train_fourth(500, 0.2)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
-	train_error, test_error, rmse_error = train_fourth(100, 500, 0.5)
+	train_error, test_error, rmse_error = train_fourth(500, 0.5)
 	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
 	X_test_rmse.append(np.min(rmse_error))
 
