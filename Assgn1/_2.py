@@ -90,10 +90,11 @@ def call_plotter(show_fig = True):
 	if (a[0] == 'y' or a[0] == 'Y'):
 		a = input("Would you like to regenerate the data? ")
 		if (a[0] == 'y' or a[0] == 'Y'):
-			_1.generate_data()
+			num_data = int(input("Enter no of datapoints: "))
+			_1.generate_data(num_data)
 		_1.train()
 		print("\n")
 	return plot(show_fig)
 
 if __name__ == "__main__":
-	call_plotter()
+	print("Best degree is "+ str(call_plotter()))
