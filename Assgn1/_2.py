@@ -10,6 +10,10 @@ X_train_cost = []
 X_test_cost = []
 X_axis = range(1, 10)
 
+line_1 = 0
+line_2 = 0
+line_3 = 0
+
 for DEGREE in range(1, 10):
 	W = np.load("W_"+str(DEGREE)+".npy")
 	cost = 0.0
@@ -52,12 +56,19 @@ for DEGREE in range(1, 10):
 		Y_pred = np.dot(W, X_power)
 		Y_here.append(Y_pred)
 
-	plt.scatter(X_train, Y_train)
-	plt.plot(X_here, Y_here, color="red")
-	plt.show()
+	plt.subplot(3,3,DEGREE)
+	plt.tight_layout()
+	line_1 = plt.scatter(X_train, Y_train)
+	line_2 = plt.scatter(X_test, Y_test, color = "green")
+	line_3 = plt.plot(X_here, Y_here, color="red")
+	plt.title("Degree "+str(DEGREE))
 
-plt.plot(X_axis, X_train_cost)
+plt.figlegend((line_1, line_2, line_3), ("Train datapoints", "Test datapoints", "Approximated function"))
 plt.show()
 
-plt.plot(X_axis, X_test_cost)
+plt.plot(X_axis, X_train_cost, label = "Training")
+plt.plot(X_axis, X_test_cost, color="red", label = "Testing")
+plt.xlabel("Degree")
+plt.ylabel("Loss")
+plt.legend()
 plt.show()

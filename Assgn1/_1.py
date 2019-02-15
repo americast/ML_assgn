@@ -77,6 +77,6 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 	return train_error, test_error, rmse_error
 
 if __name__ == "__main__":
-	train_error, test_error = train()
+	train_error, test_error, rmse_error = train()
 	print(train_error)
 	print(test_error)
