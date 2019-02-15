@@ -1,4 +1,5 @@
 import _1
+import _2
 import numpy as np
 import math
 import random
@@ -164,19 +165,24 @@ if __name__ == "__main__":
 	print("\nSquared error loss\n")
 
 	train_error, test_error, rmse_error = _1.train(100, 500, 0.025)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = _1.train(100, 500, 0.05)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = _1.train(100, 500, 0.1)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = _1.train(100, 500, 0.2)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = _1.train(100, 500, 0.5)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	plt.plot(X_axis, X_test_rmse, label = "Squared error loss")
 
@@ -185,19 +191,24 @@ if __name__ == "__main__":
 	X_test_rmse = []
 
 	train_error, test_error, rmse_error = train_abs(100, 500, 0.025)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_abs(100, 500, 0.05)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_abs(100, 500, 0.1)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_abs(100, 500, 0.2)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_abs(100, 500, 0.5)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	plt.plot(X_axis, X_test_rmse, label = "Absolute value loss", color = "green")
 
@@ -206,19 +217,24 @@ if __name__ == "__main__":
 	X_test_rmse = []
 
 	train_error, test_error, rmse_error = train_fourth(100, 500, 0.025)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_fourth(100, 500, 0.05)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_fourth(100, 500, 0.1)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_fourth(100, 500, 0.2)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	train_error, test_error, rmse_error = train_fourth(100, 500, 0.5)
-	X_test_rmse.append(rmse_error[-1])
+	print("\nProceeding with degree "+str(np.argmin(rmse_error)+1))
+	X_test_rmse.append(np.min(rmse_error))
 
 	plt.plot(X_axis, X_test_rmse, label = "Fourth power loss", color = "red")
 	plt.xlabel("Learning rate")
