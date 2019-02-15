@@ -2,6 +2,7 @@ import numpy as np
 import random
 import math
 import matplotlib.pyplot as plt
+import sys
 
 def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 
@@ -77,6 +78,9 @@ def train(NUM_DATA =10, MAX_ITER = 5000, ALPHA = 0.05):
 	return train_error, test_error, rmse_error
 
 if __name__ == "__main__":
-	train_error, test_error, rmse_error = train()
+	if (len(sys.argv) > 1):
+		train_error, test_error, rmse_error = train(int(sys.argv[1]))
+	else:
+		train_error, test_error, rmse_error = train()
 	print(train_error)
 	print(test_error)
