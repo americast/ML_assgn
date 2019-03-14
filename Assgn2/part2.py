@@ -1,129 +1,81 @@
-import pandas as pd
 import numpy as np
-import json
+import part2_loader
+import part2_train
+import part2_test
+from copy import copy
 import pudb
 
-full_dict = {}
+MAX_DEPTH = 4
 
-def compute_entropy(arr):
-	total = np.sum(arr)
-	entropy = 0.0	
-	for each in arr:
-		entropy -= (each / total) * np.log2(each / total)
-	return entropy
+print("Loading training data")
+df = part2_loader.create_df()
 
-def compute_ig(df, parent):
-	# pu.db
-	entropy_parent = compute_entropy(np.unique(df[..., -1], return_counts=True)[1])
-	total = entropy_parent
-	total_num = df.shape[0]
-	try:
-		for each in np.unique(df[...,int(parent)]):
-			df_here = df[df[...,int(parent)] == each]
-			entropy_child = compute_entropy(np.unique(df_here[..., -1], return_counts=True)[1])
-			total -= (df_here.shape[0] / float(total_num)) * entropy_child
-	except:
-		pu.db
-	return total
-
-def create_dag(df, root, full_dict, depth_here, max_depth):
-	# print("Root: "+(root))
-	# print(df[int(root)].unique())
-	# if depth_here == 2:
-	print("Depth here: "+str(depth_here))
-	if df.shape[0] == 0 or depth_here > max_depth:
-		try:
-			full_dict[out] = list(df[int(out)].value_counts().index)[0]
-		except:
-			full_dict[out] = 2
-		print("returned from here")
-		return
-	full_dict[str(root)] = {}
-	for each in [0, 1]:
-		df_here = df.loc[df[int(root)] == each].drop(int(root), axis=1)
-		max_ig = -9999999
-		children_org = list(df_here.columns)
-		children = range(len(list(df_here.columns)))
-		children = children[:-1]
-		child = children[0]
-		df_np = np.array(df_here)
-		for i in range(len(children)):
-			child_here = children[i]
-			ig_here = compute_ig(df_np, child_here)
-			if ig_here > max_ig:
-				max_ig = ig_here
-				child = children_org[i]
-		full_dict[str(root)][str(each)] = {}
-		# pu.db
-		create_dag(df_here, child, full_dict[str(root)][str(each)], depth_here + 1, max_depth)
-
-
-def create_df():
-	f = open("dataset for part 2/traindata.txt", "r")
-	f_label = open("dataset for part 2/trainlabel.txt", "r")
-	old_docID, old_wordID = 1, 1
-	old_flag = False
-	df = np.zeros((1060, 3567), dtype = np.uint64)
-	count = -1
-	while(1):
-		count += 1
-		# print(count)
-		# words = [0 for x in range(3566)]
-		if old_flag:
-			df[count, old_wordID - 1] = 1
-		while(1):
-			line = f.readline()
-			if not line:
-				break
-			line = line.split()
-			docID, wordID = int(line[0]), int(line[1])
-			if (docID != old_docID):
-				old_wordID = wordID
-				old_docID = docID
-				old_flag = True
-				break
-			df[count, wordID - 1] = 1
-
-		label = int(f_label.readline())
-
-		# words.append(label)
-		df[count, -1] = label
-		# df = df.append([pd.Series(words)])
-		if not line:
-			break
-		# print("Appended to df")
-		# pu.db
-
-
-	df = pd.DataFrame(df)
-	f.close()
-	f_label.close()
-	return df
-	
-print("Loading data")
-df = create_df()
-# pu.db
 
 print("Finding out root")
-max_ig = -9999999
+max_ig = float('-inf')
 children = list(df.columns)
 children = [str(x) for x in children]
 out = children[-1]
 children = children[:-1]
 child = children[0]
 df_np = np.array(df)
+print()
 for child_here in children:
-	print(child_here)
-	ig_here = compute_ig(df_np, child_here)
+	print(str(int(child_here) + 1) +" / "+str(len(children)), end = "\r")
+	ig_here = part2_train.compute_ig(df_np, child_here)
 	if ig_here > max_ig:
 		max_ig = ig_here
 		child = child_here
+print()
+full_dict = {}
+print("Learning the DT")
+models = [x for x in range(MAX_DEPTH)]
+part2_train.create_dag(df, child, full_dict, 1, MAX_DEPTH, out, models)
 
-print("Creating dag")
-create_dag(df, child, full_dict, depth_here = 1, max_depth = 10)
+print("Loading testing data")
+df_test = part2_loader.create_df("test")
+
+train_acc = []
+test_acc = []
+depth = 0
+
 # pu.db
-print(json.dumps(full_dict, sort_keys=True, indent=4))
+for model in models:
+	depth += 1
+	print("Depth: "+str(depth))
+	children = list(df.columns)
+	children = [str(x) for x in children]
+	out = children[-1]
+	children = children[:-1]
+	child = children[0]
 
-f = open("model_part_2.json", "w")
-json.dump(full_dict, f, sort_keys = True, indent = 4)
-f.close()
+	acc = 0
+	total_num = df[int(out)].count()
+	for i in range(df[int(out)].count()):
+		row_here = df.loc[i]
+		result = part2_test.infer(row_here, copy(model), out)
+		if (result == list(row_here)[-1]):
+			acc+=1
+
+	print("Train accuracy: "+str(float(acc)/total_num))
+	train_acc.append(float(acc)/total_num)
+
+	children = list(df_test.columns)
+	children = [str(x) for x in children]
+	out = children[-1]
+	children = children[:-1]
+	child = children[0]
+
+	acc = 0
+	total_num = df_test[int(out)].count()
+	for i in range(df_test[int(out)].count()):
+		row_here = df_test.loc[i]
+		result = part2_test.infer(row_here, copy(model), out)
+		if (result == list(row_here)[-1]):
+			acc+=1
+
+	test_acc.append(float(acc)/total_num)
+	print("Test accuracy: "+str(float(acc)/total_num))
+	print()
+
+pu.db

@@ -89,7 +89,7 @@ for child_here in children:
 		max_ig = ig_here
 		child = child_here
 
-create_dag(df, child, full_dict, compute_gini)
+create_dag(df, child, full_dict, compute_ig)
 
 print(json.dumps(full_dict, sort_keys=True, indent=4))
 
