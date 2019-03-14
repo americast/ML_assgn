@@ -31,12 +31,12 @@ def create_df():
 				break
 			df[count, wordID - 1] = 1
 
-		if not line:
-			break
 		label = int(f_label.readline())
 
 		# words.append(label)
 		df[count, -1] = label
+		if not line:
+			break
 		# df = df.append([pd.Series(words)])
 		# print("Appended to df")
 		# pu.db
@@ -73,12 +73,12 @@ def create_df_test():
 				break
 			df[count, wordID - 1] = 1
 
-		if not line:
-			break
 		label = int(f_label.readline())
 
 		# words.append(label)
 		df[count, -1] = label
+		if not line:
+			break
 		# df = df.append([pd.Series(words)])
 		# print("Appended to df")
 		# pu.db

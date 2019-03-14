@@ -7,30 +7,33 @@ full_dict = {}
 
 def compute_entropy(arr):
 	total = np.sum(arr)
-	entropy = 0.0
+	entropy = 0.0	
 	for each in arr:
 		entropy -= (each / total) * np.log2(each / total)
 	return entropy
 
 def compute_ig(df, parent):
-	entropy_parent = compute_entropy(list(df[int(out)].value_counts()))
+	df = np.array(df)
+	entropy_parent = compute_entropy(np.unique(df[..., -1], return_counts=True)[1])
 	total = entropy_parent
-	total_num = df[int(out)].count()
-	for each in list(df[int(parent)].unique()):
-		df_here = df.loc[df[int(parent)] == each]
-		entropy_child = compute_entropy(list(df_here[int(out)].value_counts()))
-		total -= (df_here[int(out)].count() / float(total_num)) * entropy_child
+	total_num = df.shape[0]
+	for each in np.unique(df[...,int(parent)]):
+		df_here = df[df[...,int(parent)] == each]
+		entropy_child = compute_entropy(np.unique(df_here[..., -1], return_counts=True)[1])
+		total -= (df_here.shape[0] / float(total_num)) * entropy_child
 	return total
 
 def create_dag(df, root, full_dict, depth_here, max_depth):
 	# print("Root: "+(root))
 	# print(df[int(root)].unique())
+	# pu.db
 	print("Depth here: "+str(depth_here))
-	if len(list(df[int(root)].unique())) <= 1 or depth_here > max_depth:
+	if df.shape[1] == 0 or depth_here > max_depth:
 		full_dict[out] = list(df[int(out)].value_counts().index)[0]
+		print("returned from here")
 		return
 	full_dict[str(root)] = {}
-	for each in list(df[int(root)].unique()):
+	for each in ["0", "1"]:
 		df_here = df.loc[df[int(root)] == each].drop(int(root), axis=1)
 		max_ig = -9999999
 		children = list(df_here.columns)
@@ -71,13 +74,13 @@ def create_df():
 				break
 			df[count, wordID - 1] = 1
 
-		if not line:
-			break
 		label = int(f_label.readline())
 
 		# words.append(label)
 		df[count, -1] = label
 		# df = df.append([pd.Series(words)])
+		if not line:
+			break
 		# print("Appended to df")
 		# pu.db
 
@@ -106,7 +109,7 @@ for child_here in children:
 		child = child_here
 
 print("Creating dag")
-create_dag(df, child, full_dict, depth_here = 1, max_depth = 2)
+create_dag(df, child, full_dict, depth_here = 1, max_depth = 4)
 # pu.db
 print(json.dumps(full_dict, sort_keys=True, indent=4))
 
