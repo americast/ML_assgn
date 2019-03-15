@@ -53,6 +53,8 @@ def create_dag(df, root, full_dict, imp_func = "compute_ig", out = "profitable",
 	for each in list(df[root].unique()):
 		df_here = df.loc[df[root] == each].drop(root, axis=1)
 		max_ig = float('-inf')
+		if imp_func != "compute_ig":
+			max_ig = float('inf')
 		# pu.db
 		children = list(df_here.columns)
 		children.remove(out)
