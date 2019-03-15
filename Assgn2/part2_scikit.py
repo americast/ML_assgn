@@ -89,8 +89,8 @@ def create_df_test():
 	f_label.close()
 	return df
 
-df = create_df()
-df_test = create_df_test()
+# df = create_df()
+# df_test = create_df_test()
 
 # for each in df:
 # 	col = df[each]
@@ -110,39 +110,61 @@ df_test = create_df_test()
 # 		col[i] = mapping[col[i]]
 
 
+def dtc(df, df_test, criterion, MAX_DEPTH):
 
-X = []
-Y = []
-X_test = []
-Y_test = []
-
-
-children = list(df.columns)
-children = [str(x) for x in children]
-out = children[-1]
-children = children[:-1]
+	X = []
+	Y = []
+	X_test = []
+	Y_test = []
 
 
-for i in range(df[int(out)].count()):
-	row_here = df.loc[i]
-	X.append(list(row_here)[:-1])
-	Y.append(list(row_here)[-1])
+	children = list(df.columns)
+	children = [str(x) for x in children]
+	out = children[-1]
+	children = children[:-1]
 
 
+	for i in range(df[int(out)].count()):
+		row_here = df.loc[i]
+		X.append(list(row_here)[:-1])
+		Y.append(list(row_here)[-1])
 
-clf = tree.DecisionTreeClassifier()
-clf = clf.fit(X, Y)
 
-acc = 0
-total = df_test[int(out)].count()
-for i in range(df_test[int(out)].count()):
-	row_here = df_test.loc[i]
-	X_test = list(row_here)[:-1]
-	Y_test = list(row_here)[-1]
+	train_accs = []
+	test_accs = []
 
-	Y_pred = clf.predict([X_test])[0]
+	for max_depth in range(1, MAX_DEPTH + 1):
+		clf = tree.DecisionTreeClassifier(criterion=criterion, max_depth = max_depth)
+		clf = clf.fit(X, Y)
 
-	if Y_test == Y_pred:
-		acc += 1
+		acc = 0
+		total = df_test[int(out)].count()
+		for i in range(df_test[int(out)].count()):
+			row_here = df_test.loc[i]
+			X_test = list(row_here)[:-1]
+			Y_test = list(row_here)[-1]
 
-print("Acc: "+str(float(acc) / total))
+			Y_pred = clf.predict([X_test])[0]
+
+			if Y_test == Y_pred:
+				acc += 1
+
+		print("Test acc at "+str(max_depth)+": "+str(float(acc) / total))
+		test_accs.append(float(acc) / total)
+
+		acc = 0
+		total = df[int(out)].count()
+		for i in range(df[int(out)].count()):
+			row_here = df.loc[i]
+			X_test = list(row_here)[:-1]
+			Y_test = list(row_here)[-1]
+
+			Y_pred = clf.predict([X_test])[0]
+
+			if Y_test == Y_pred:
+				acc += 1
+
+		print("Train acc at "+str(max_depth)+": "+str(float(acc) / total))
+		train_accs.append(float(acc) / total)
+
+	return train_accs, test_accs
