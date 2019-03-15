@@ -41,7 +41,7 @@ def create_dag(df, root, full_dict, depth_here, max_depth, out):
 	full_dict[str(root)] = {}
 	for each in [0, 1]:
 		df_here = df.loc[df[int(root)] == each].drop(int(root), axis=1)
-		max_ig = -9999999
+		max_ig = float('-inf')
 		children_org = list(df_here.columns)
 		children = range(len(list(df_here.columns)))
 		children = children[:-1]

@@ -21,17 +21,23 @@ children = children[:-1]
 child = children[0]
 df_np = np.array(df)
 print()
+threads_here = []
 for child_here in children:
 	print(str(int(child_here) + 1) +" / "+str(len(children)), end = "\r")
+	# threads_here.append(threading.Thread(target=part2_train.compute_ig, args=(df_np, child_here)))
 	ig_here = part2_train.compute_ig(df_np, child_here)
+	# threads_here[-1].start()
 	if ig_here > max_ig:
 		max_ig = ig_here
 		child = child_here
+# for each in threads_here:
+# 	each.join()
 print()
+
 print("Learning the DT")
 
 models = [0 for x in range(MAX_DEPTH)]
-for max_depth in range(1, MAX_DEPTH + 1):
+for max_depth in range(MAX_DEPTH, MAX_DEPTH + 1):
 	full_dict = {}
 	part2_train.create_dag(df, child, full_dict, 1, max_depth, out)
 
