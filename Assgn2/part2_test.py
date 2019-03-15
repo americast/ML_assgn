@@ -5,10 +5,15 @@ import pudb
 from copy import copy
 
 # pu.db
-def infer(row, model, out):
+def infer(row, model, out, req_depth = None, depth = 1):
 	while(1):
 		# print("here")
 		choice = [x for x in model][0]
+		if choice == "__result__":
+			choice = [x for x in model][1]
+
+		if req_depth != None and depth > req_depth:
+			return model["__result__"]
 		# pu.db
 		actual_value = row[int(choice)]
 		# print("model: "+str(model))
@@ -22,6 +27,7 @@ def infer(row, model, out):
 			pu.db
 			return model[out]
 		model = model[str(actual_value)]
+		depth += 1
 
 
 if __name__ == "__main__":

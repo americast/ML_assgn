@@ -149,7 +149,7 @@ def dtc(df, df_test, criterion, MAX_DEPTH):
 			if Y_test == Y_pred:
 				acc += 1
 
-		print("Test acc at "+str(max_depth)+": "+str(float(acc) / total))
+		print("Scikit test acc at "+str(max_depth)+": "+str(float(acc) / total))
 		test_accs.append(float(acc) / total)
 
 		acc = 0
@@ -164,7 +164,7 @@ def dtc(df, df_test, criterion, MAX_DEPTH):
 			if Y_test == Y_pred:
 				acc += 1
 
-		print("Train acc at "+str(max_depth)+": "+str(float(acc) / total))
+		print("Scikit train acc at "+str(max_depth)+": "+str(float(acc) / total))
 		train_accs.append(float(acc) / total)
 
 	return train_accs, test_accs

@@ -13,14 +13,14 @@ def dtc(df, df_test, criterion):
 		for i in range(len(list(col))):
 			col[i] = mapping[col[i]]
 
-		col = df_test[each]
-		unique = list(col.unique())
-		mapping = {}
-		for i in range(len(unique)):
-			mapping[unique[i]] = i
-		for i in range(len(list(col))):
-			col[i] = mapping[col[i]]
-			
+		col_test = df_test[each]
+		# unique = list(col.unique())
+		# mapping = {}
+		# for i in range(len(unique)):
+		# 	mapping[unique[i]] = i
+		for i in range(len(list(col_test))):
+			col_test[i] = mapping[col_test[i]]
+
 	X = []
 	Y = []
 	X_test = []
@@ -53,6 +53,7 @@ def dtc(df, df_test, criterion):
 
 	acc = 0
 	total = df["profitable"].count()
+	# pu.db
 	for i in range(df["profitable"].count()):
 		row_here = df.loc[i]
 		X_test = list(row_here)[:-1]
@@ -67,4 +68,6 @@ def dtc(df, df_test, criterion):
 
 	train_acc = float(acc) / total
 
-	return train_acc, test_acc
+	# pu.db
+
+	return train_acc, test_acc, clf
