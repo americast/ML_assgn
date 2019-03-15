@@ -1,98 +1,128 @@
+import part1_train
+import part1_test
+import part1_scikit
 import pandas as pd
 import numpy as np
 import json
-import pudb
+from copy import copy
 
 full_dict = {}
 
-def compute_entropy(arr):
-	total = np.sum(arr)
-	entropy = 0.0
-	for each in arr:
-		entropy -= (each / total) * np.log2(each / total)
-	return entropy
-
-def compute_ig(df, parent):
-	entropy_parent = compute_entropy(list(df[out].value_counts()))
-	total = entropy_parent
-	total_num = df[out].count()
-	for each in list(df[parent].unique()):
-		df_here = df.loc[df[parent] == each]
-		entropy_child = compute_entropy(list(df_here[out].value_counts()))
-		total -= (df_here[out].count() / float(total_num)) * entropy_child
-	return total
-
-def gini(arr):
-	total = np.sum(arr)
-	gini = 1.0
-	for each in arr:
-		gini -= (float(each) / total) ** 2
-	return gini
-
-def compute_gini(df, parent):
-	gini_split = 0.0
-	total_num = df[out].count()
-	for each in list(df[parent].unique()):
-		df_here = df.loc[df[parent] == each]
-		gini_here = gini(list(df_here[out].value_counts()))
-		gini_split += (df_here[out].count() / float(total_num)) * gini_here
-	return gini_split
-
-
-
-def create_dag(df, root, full_dict, imp_func = compute_ig):
-	# print("Root: "+str(root))
-	# print(df[root].unique())
-	if len(list(df[root].unique())) <= 1 or len(list(df[out].unique())) <= 1:
-		full_dict[out] = list(df[out].value_counts().index)[0]
-		return
-	full_dict[str(root)] = {}
-	for each in list(df[root].unique()):
-		df_here = df.loc[df[root] == each].drop(root, axis=1)
-		max_ig = -9999999
-		# pu.db
-		children = list(df_here.columns)
-		children.remove(out)
-		child = children[0]
-		for child_here in children:
-			if imp_func == compute_ig:
-				ig_here = imp_func(df_here, child_here)
-				if ig_here > max_ig:
-					max_ig = ig_here
-					child = child_here
-			else:
-				ig_here = imp_func(df_here, child_here)
-				if ig_here < max_ig:
-					max_ig = ig_here
-					child = child_here
-
-		full_dict[str(root)][str(each)] = {}
-		print(root)
-		print(each)
-		print()
-		create_dag(df_here, child, full_dict[str(root)][str(each)])
-
-
-
-	
-
 df = pd.read_csv("dataset for part 1 - Training Data.csv")
+df_test = pd.read_csv("dataset for part 1 - Test Data.csv")
 
-max_ig = -9999999
+max_ig = float('-inf')
 children = list(df.columns)
 out = children[-1]
 children = children[:-1]
 child = children[0]
 for child_here in children:
-	ig_here = compute_ig(df, child_here)
+	ig_here = part1_train.compute_ig(df, child_here, out)
 	if ig_here > max_ig:
 		max_ig = ig_here
 		child = child_here
 
-create_dag(df, child, full_dict, compute_ig)
-
-print(json.dumps(full_dict, sort_keys=True, indent=4))
-
-f = open("model_part_1a.json", "w")
+part1_train.create_dag(df, child, full_dict, "compute_ig", out)
+# model = json.dumps(full_dict, sort_keys=True, indent=4)
+model = full_dict
+f = open("model_part_1a_ig.json", "w")
 json.dump(full_dict, f, sort_keys = True, indent = 4)
 f.close()
+
+
+df = pd.read_csv("dataset for part 1 - Training Data.csv")
+
+acc = 0
+total_num = df["profitable"].count()
+
+
+
+for i in range(df["profitable"].count()):
+	row_here = df.loc[i]
+	result = part1_test.infer(row_here, copy(model))
+	# print(result)
+	if (result == list(row_here)[-1]):
+		acc+=1
+
+print("Model training accuracy using information gain: "+str(float(acc)/total_num))
+
+
+acc = 0
+total_num = df_test["profitable"].count()
+
+
+for i in range(df_test["profitable"].count()):
+	row_here = df_test.loc[i]
+	result = part1_test.infer(row_here, copy(model))
+	# print(result)
+	if (result == list(row_here)[-1]):
+		acc+=1
+
+print("Model test accuracy using information gain: "+str(float(acc)/total_num))
+
+train_acc_scikit, test_acc_scikit = part1_scikit.dtc(df, df_test, "entropy")
+
+print("Scikit training accuracy using information gain: "+str(train_acc_scikit))
+print("Scikit test accuracy using information gain: "+str(test_acc_scikit))
+print()
+
+
+
+df = pd.read_csv("dataset for part 1 - Training Data.csv")
+df_test = pd.read_csv("dataset for part 1 - Test Data.csv")
+
+max_ig = float('-inf')
+children = list(df.columns)
+out = children[-1]
+children = children[:-1]
+child = children[0]
+for child_here in children:
+	ig_here = part1_train.compute_gini(df, child_here, out)
+	if ig_here < max_ig:
+		max_ig = ig_here
+		child = child_here
+
+part1_train.create_dag(df, child, full_dict, "compute_gini", out)
+# model = json.dumps(full_dict, sort_keys=True, indent=4)
+model = full_dict
+f = open("model_part_1a_gini.json", "w")
+json.dump(full_dict, f, sort_keys = True, indent = 4)
+f.close()
+
+
+df = pd.read_csv("dataset for part 1 - Training Data.csv")
+
+acc = 0
+total_num = df["profitable"].count()
+
+
+
+for i in range(df["profitable"].count()):
+	row_here = df.loc[i]
+	result = part1_test.infer(row_here, copy(model))
+	# print(result)
+	if (result == list(row_here)[-1]):
+		acc+=1
+
+print("Model training accuracy using gini split: "+str(float(acc)/total_num))
+
+
+acc = 0
+total_num = df_test["profitable"].count()
+
+
+for i in range(df_test["profitable"].count()):
+	row_here = df_test.loc[i]
+	result = part1_test.infer(row_here, copy(model))
+	# print(result)
+	if (result == list(row_here)[-1]):
+		acc+=1
+
+print("Model test accuracy using gini split: "+str(float(acc)/total_num))
+
+train_acc_scikit, test_acc_scikit = part1_scikit.dtc(df, df_test, "gini")
+
+print("Scikit training accuracy using gini split: "+str(train_acc_scikit))
+print("Scikit test accuracy using gini split: "+str(test_acc_scikit))
+print()
+

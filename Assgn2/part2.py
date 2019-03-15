@@ -6,7 +6,7 @@ import part2_scikit
 from copy import copy
 import pudb
 
-MAX_DEPTH = 50
+MAX_DEPTH = 20
 
 print("Loading training data")
 df = part2_loader.create_df()
