@@ -23,6 +23,18 @@ def distance(clust_choice_a, clust_choice_b, linkage="complete"):
 	else:
 		return min_
 
+def unique(list1): 
+	# intilize a null list 
+	unique_list = [] 
+	  
+	# traverse for all elements 
+	for x in list1: 
+	    # check if exists in unique_list or not 
+	    if x not in unique_list: 
+	        unique_list.append(x) 
+	return unique_list
+
+
 df = pd.read_csv("AAAI.csv")
 
 topics = []
@@ -72,9 +84,10 @@ while(1):
 	for i in range(len(node_list)):
 		for j in range(i+1, len(node_list)):
 			if node_list[i] == node_list[j]:
+				# print("Here")
 				continue
 			try:
-				dist_here = prox_mat[node_list[i][0] - 1, node_list[j][0] - 1]
+				dist_here = prox_mat[i, j]
 			except:
 				pu.db
 			if min_dist > dist_here:
@@ -82,30 +95,54 @@ while(1):
 				choice_1 = i
 				choice_2 = j
 
+	choice_1_s = []
+	choice_2_s = []
+
+	for k in range(len(node_list)):
+		if node_list[k] == node_list[choice_1]:
+			choice_1_s.append(k)
+		if node_list[k] == node_list[choice_2]:
+			choice_2_s.append(k)
+
+	for i in range(len(node_list)):
+		if i not in choice_1_s and i not in choice_2_s:
+			prox_mat[choice_1, i] = max(prox_mat[choice_1, i], prox_mat[choice_2, i])
+
+			for l in choice_2_s:
+				prox_mat[l, i] = prox_mat[choice_1, i]
+				prox_mat[i, l] = prox_mat[choice_1, i]
+
+			for l in choice_1_s:
+				prox_mat[i, l] = prox_mat[choice_1, i]
+
+
+	# if (iter_ == 138):
+	# 	pu.db
+
 	for each_item in node_list[choice_2]:
 		if each_item == -1:
 			break
-		try:	
+		try:
 			node_list[choice_1][node_lens[choice_1]] = each_item
 			node_lens[choice_1] += 1
 		except:
 			pu.db
 
-	node_list[choice_2] = node_list[choice_1]
+	for l in choice_1_s:
+		node_list[l] = node_list[choice_1]
+		node_lens[l] = node_lens[choice_1]
 
-	for i in range(len(node_list)):
-		if i not in node_list[choice_1]:
-			prox_mat[node_list[choice_1][0] - 1, i] = distance(choice_1, choice_2)
-			prox_mat[i, node_list[choice_1][0] - 1] = prox_mat[node_list[choice_1][0] - 1, i]
 
-		for j in node_list[choice_1]:
-			if j == -1:
-				break
-			prox_mat[j - 1, i] = prox_mat[node_list[choice_1][0] - 1, i]
-			prox_mat[i, j - 1] = prox_mat[i, node_list[choice_1][0] - 1]
-
+	for l in choice_2_s:
+		node_list[l] = node_list[choice_1]
+		node_lens[l] = node_lens[choice_1]
 
 
 print()
+
+node_list = unique(node_list)
+
+for i in range(len(node_list)):
+	node_list[i] = node_list[i][:np.argmin(node_list[i])]
 
 pu.db
