@@ -38,9 +38,15 @@ def NMF(clus):
 
 	I_y_c = h_y
 
-	for each in clus:
-		I_y_c -= entropy_class(each)
 
+	total = 0
+
+	for each in clus:
+		total += len(each)
+
+	for each in clus:
+		I_y_c -= (float(len(each)) / total) * entropy_class(each)
+	pu.db
 	return 2 * float(I_y_c) / (h_y + h_c)
 
 clus_1 = part1.hier_clus(df)
