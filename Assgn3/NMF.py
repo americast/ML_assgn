@@ -27,7 +27,7 @@ def entropy_clus(clus):
 	return compute_entropy(arr)
 
 def entropy_class(arr):
-	df_here = df.loc[arr]
+	df_here = df.loc[list(np.array(arr) - 1)]
 	# pu.db
 	return compute_entropy(list(df_here["High-Level Keyword(s)"].value_counts()))
 	# pu.db
@@ -46,15 +46,17 @@ def NMF(clus):
 
 	for each in clus:
 		I_y_c -= (float(len(each)) / total) * entropy_class(each)
-	pu.db
+	# pu.db
 	return 2 * float(I_y_c) / (h_y + h_c)
 
 clus_1 = part1.hier_clus(df)
-clus_2 = part2.graph_clus(df)
-clus_3 = part3.high_level_clus(df)
+clus_2 = part1.hier_clus(df, "single")
+clus_3 = part2.graph_clus(df, 0.18)
+# clus_4 = part3.high_level_clus(df)
 
+# NMF_4 = NMF(clus_4)
 NMF_1 = NMF(clus_1)
 NMF_2 = NMF(clus_2)
 NMF_3 = NMF(clus_3)
 
-print("NMF of:\nHierarchical clustering: "+str(NMF_1)+"\nGraph clustering: "+str(NMF_2)+"\nHigh level clustering: "+str(NMF_3))
+print("NMF of:\nHierarchical clustering (complete): "+str(NMF_1)+"\nHierarchical clustering (single): "+str(NMF_2)+"\nGraph clustering: "+str(NMF_3))
