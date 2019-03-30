@@ -5,23 +5,26 @@ import pudb
 def jaccard_coef(a, b):
 	inter = len(set(a).intersection(b))
 	union = len(set(a).union(set(b)))
+	# print(a)
+	# print(b)
 	return float(inter) / union
 
-def distance(clust_choice_a, clust_choice_b, all_dict, node_list, node_lens, linkage="complete"):
-	max_ = float('-inf')
-	min_ = float('inf')
-	for i in range(node_lens[clust_choice_a]):
-		for j in range(node_lens[clust_choice_b]):
-			coef_here = jaccard_coef(all_dict[str(node_list[clust_choice_a][i])], all_dict[str(node_list[clust_choice_b][j])])
-			if (coef_here > max_):
-				max_ = coef_here
-			if (coef_here < min_):
-				min_ = coef_here
+# def distance(clust_choice_a, clust_choice_b, all_dict, node_list, node_lens, linkage="complete"):
+# 	max_ = float('-inf')
+# 	min_ = float('inf')
+# 	for i in range(node_lens[clust_choice_a]):
+# 		for j in range(node_lens[clust_choice_b]):
+# 			coef_here = jaccard_coef(all_dict[str(node_list[clust_choice_a][i])], all_dict[str(node_list[clust_choice_b][j])])
+# 			print("coef here: ", coef_here)
+# 			if (coef_here > max_):
+# 				max_ = coef_here
+# 			if (coef_here < min_):
+# 				min_ = coef_here
 
-	if linkage == "complete":
-		return max_
-	else:
-		return min_
+# 	if linkage == "complete":
+# 		return max_
+# 	else:
+# 		return min_
 
 def unique(list1): 
 	# intilize a null list 
@@ -63,13 +66,13 @@ def hier_clus(df, linkage="complete"):
 
 	for i in range(tot_count):
 		for j in range(i + 1, tot_count):
-			prox_mat[i, j] = distance(i, j, all_dict, node_list, node_lens, linkage)
+			prox_mat[i, j] = jaccard_coef(all_dict[str(node_list[i][0])], all_dict[str(node_list[j][0])])
 			prox_mat[j, i] = prox_mat[i, j]
 
 	iter_ = 1
 	print()
 	while(1):
-		print("iter_no: "+str(iter_)+", size: "+str(tot_count), end="\r")
+		print("iter_no: "+str(iter_)+", size: "+str(tot_count)+"    ", end="\r")
 		iter_ += 1
 		if tot_count <= 9:
 			break
@@ -102,6 +105,8 @@ def hier_clus(df, linkage="complete"):
 				choice_1_s.append(k)
 			if node_list[k] == node_list[choice_2]:
 				choice_2_s.append(k)
+		# print("choice_1_s: ", choice_1_s)
+		# print("choice_2_s: ", choice_2_s)
 
 		for i in range(len(node_list)):
 			if i not in choice_1_s and i not in choice_2_s:

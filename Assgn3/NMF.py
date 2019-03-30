@@ -4,7 +4,7 @@ import pudb
 
 df = pd.read_csv("AAAI.csv")
 
-import part1
+import part1_mod
 import part2
 import part3
 import warnings
@@ -49,9 +49,9 @@ def NMF(clus):
 	# pu.db
 	return 2 * float(I_y_c) / (h_y + h_c)
 
-clus_1 = part1.hier_clus(df)
-clus_2 = part1.hier_clus(df, "single")
-clus_3 = part2.graph_clus(df, 0.18)
+clus_1 = part1_mod.hier_clus(df)
+clus_2 = part1_mod.hier_clus(df, "single")
+clus_3 = part2.graph_clus(df, 0)
 # clus_4 = part3.high_level_clus(df)
 
 # NMF_4 = NMF(clus_4)
