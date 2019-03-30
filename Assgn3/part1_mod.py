@@ -7,7 +7,7 @@ def jaccard_coef(a, b):
 	union = len(set(a).union(set(b)))
 	return float(inter) / union
 
-def distance(clust_a, clust_b, node_lens_i, node_lens_j, all_dict, linkage="complete"):
+def proximity(clust_a, clust_b, node_lens_i, node_lens_j, all_dict, linkage="complete"):
 	max_ = float('-inf')
 	min_ = float('inf')
 	for i in range(node_lens_i):
@@ -62,18 +62,19 @@ def hier_clus(df, linkage = "complete"):
 		iter_ += 1
 		if len(node_list) <= 9:
 			break
-		min_dist = float('inf')
+		min_dist = float('-inf')
 
 		choice_1 = 0
 		choice_2 = 0
 
 		for i in range(len(node_list)):
 			for j in range(i+1, len(node_list)):
-				dist_here = distance(node_list[i], node_list[j], node_lens[i], node_lens[j], all_dict, linkage)
-				if min_dist > dist_here:
+				dist_here = proximity(node_list[i], node_list[j], node_lens[i], node_lens[j], all_dict, linkage)
+				if min_dist < dist_here:
 					min_dist = dist_here
 					choice_1 = i
 					choice_2 = j
+
 
 		for each_item in node_list[choice_2]:
 			if each_item == -1:
@@ -85,8 +86,12 @@ def hier_clus(df, linkage = "complete"):
 			node_lens[choice_1] += 1
 
 		# node_list[choice_1].extend(node_list[choice_2])
-		node_list = node_list[:choice_2] + node_list[choice_2+1:]
-		node_lens = node_lens[:choice_2] + node_lens[choice_2+1:]
+		node_list.append(node_list[choice_1])
+		node_lens.append(node_lens[choice_1])
+		node_list = node_list[:choice_1] + node_list[choice_1+1:]
+		node_lens = node_lens[:choice_1] + node_lens[choice_1+1:]
+		node_list = node_list[:choice_2 - 1] + node_list[choice_2:]
+		node_lens = node_lens[:choice_2 - 1] + node_lens[choice_2:]
 
 	print("\n")
 

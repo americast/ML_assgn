@@ -51,7 +51,7 @@ def NMF(clus):
 
 clus_1 = part1_mod.hier_clus(df)
 clus_2 = part1_mod.hier_clus(df, "single")
-clus_3 = part2.graph_clus(df, 0)
+clus_3 = part2.graph_clus(df, 0.1)
 # clus_4 = part3.high_level_clus(df)
 
 # NMF_4 = NMF(clus_4)
@@ -59,4 +59,7 @@ NMF_1 = NMF(clus_1)
 NMF_2 = NMF(clus_2)
 NMF_3 = NMF(clus_3)
 
-print("NMF of:\nHierarchical clustering (complete): "+str(NMF_1)+"\nHierarchical clustering (single): "+str(NMF_2)+"\nGraph clustering: "+str(NMF_3))
+print("NMF of:\nHierarchical clustering (complete): "+str(NMF_1)+"\nHierarchical clustering (single): "+str(NMF_2))
+print("Graph clustering: "+str(NMF_3))
+
+pu.db
