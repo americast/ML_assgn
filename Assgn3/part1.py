@@ -78,7 +78,7 @@ def hier_clus(df, linkage="complete"):
 			break
 		tot_count-=1
 
-		min_dist = float('inf')
+		min_dist = float('-inf')
 
 		choice_1 = 0
 		choice_2 = 0
@@ -92,7 +92,7 @@ def hier_clus(df, linkage="complete"):
 					dist_here = prox_mat[i, j]
 				except:
 					pu.db
-				if min_dist > dist_here:
+				if min_dist < dist_here:
 					min_dist = dist_here
 					choice_1 = i
 					choice_2 = j

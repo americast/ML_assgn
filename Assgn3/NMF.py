@@ -62,4 +62,4 @@ NMF_3 = NMF(clus_3)
 print("NMF of:\nHierarchical clustering (complete): "+str(NMF_1)+"\nHierarchical clustering (single): "+str(NMF_2))
 print("Graph clustering: "+str(NMF_3))
 
-pu.db
+# pu.db
