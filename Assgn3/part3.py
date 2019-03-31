@@ -1,7 +1,13 @@
+###########
+# ML Assgn 3
+# Sayan Sinha
+# 16CS10048
+###########
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import pudb
+# import pudb
 
 def high_level_clus(df):
 	topics = []

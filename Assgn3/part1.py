@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import pudb
+# import pudb
 
 def jaccard_coef(a, b):
 	inter = len(set(a).intersection(b))
@@ -58,7 +58,7 @@ def hier_clus(df, linkage = "complete"):
 	iter_ = 1
 	print()
 	while(1):
-		print("iter_no: "+str(iter_)+", size: "+str(len(node_list))+"   ", end="\r")
+		print("iter_no: "+str(iter_)+", clusters: "+str(len(node_list))+"   ", end="\r")
 		iter_ += 1
 		if len(node_list) <= 9:
 			break
@@ -76,22 +76,24 @@ def hier_clus(df, linkage = "complete"):
 					choice_2 = j
 
 
-		for each_item in node_list[choice_2]:
+		for each_item in node_list[choice_1]:
 			if each_item == -1:
 				break
-			try:
-				node_list[choice_1][node_lens[choice_1]] = each_item
-			except:
-				pu.db
-			node_lens[choice_1] += 1
+			node_list[choice_2][node_lens[choice_2]] = each_item
+			node_lens[choice_2] += 1
 
 		# node_list[choice_1].extend(node_list[choice_2])
-		node_list.append(node_list[choice_1])
-		node_lens.append(node_lens[choice_1])
-		node_list = node_list[:choice_1] + node_list[choice_1+1:]
-		node_lens = node_lens[:choice_1] + node_lens[choice_1+1:]
-		node_list = node_list[:choice_2 - 1] + node_list[choice_2:]
-		node_lens = node_lens[:choice_2 - 1] + node_lens[choice_2:]
+		if linkage != "complete":
+			node_list = node_list[:choice_1] + node_list[choice_1 + 1:]
+			node_lens = node_lens[:choice_1] + node_lens[choice_1 + 1:]
+		else:
+			node_list.append(node_list[choice_2])
+			node_lens.append(node_lens[choice_2])
+			node_list = node_list[:choice_2] + node_list[choice_2+1:]
+			node_lens = node_lens[:choice_2] + node_lens[choice_2+1:]
+			node_list = node_list[:choice_1] + node_list[choice_1 + 1:]
+			node_lens = node_lens[:choice_1] + node_lens[choice_1 + 1:]
+
 
 	print("\n")
 
@@ -104,13 +106,32 @@ def hier_clus(df, linkage = "complete"):
 
 	return node_list
 
-	pu.db
+	# pu.db
 
 if __name__ == "__main__":
 	df = pd.read_csv("AAAI.csv")
 	print("Choose linkage type:\n1) Single\n2) Complete\n")
 	choice = int(input("Enter choice: "))
+	clus = []
 	if choice == 1:
-		print(hier_clus(df, "single"))
+		clus = hier_clus(df, "single")
 	else:
-		print(hier_clus(df))
+		clus = hier_clus(df)
+
+	titles = list(df["Title"])
+	clus_names = []
+	for each in clus:       
+	    clus_names.append([])                                        
+	    for every in each:
+	        clus_names[-1].append(titles[every - 1])
+	            
+	count = 1
+
+	for each in clus_names:   
+		print("Cluster no "+str(count)+":" )                         
+		print(each)       
+		print()                                     
+		count+=1
+
+
+	# pu.db

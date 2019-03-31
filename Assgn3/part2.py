@@ -1,9 +1,17 @@
+###########
+# ML Assgn 3
+# Sayan Sinha
+# 16CS10048
+###########
+
 import pandas as pd
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-import pudb
+# import pudb
 import part1
+import warnings
+warnings.filterwarnings("ignore")
 
 DIST_THRESH = 0
 
@@ -50,7 +58,7 @@ def graph_clus(df, DIST_THRESH = DIST_THRESH):
 		# pu.db
 		num_clusters = len(clusters)
 
-		print("iter_no: "+str(iter_)+", size: "+str(num_clusters), end = "\r")
+		print("iter_no: "+str(iter_)+", clusters: "+str(num_clusters), end = "\r")
 		iter_ += 1
 		if num_clusters >= 9:
 			break
@@ -64,7 +72,7 @@ def graph_clus(df, DIST_THRESH = DIST_THRESH):
 		G.remove_edge(req_edges[0], req_edges[1])
 	print()
 	nx.draw(G)
-	plt.show()
+	plt.show("Clusters map")
 
 	clusters = list(nx.connected_component_subgraphs(G))
 	all_nodes = []
@@ -77,5 +85,25 @@ def graph_clus(df, DIST_THRESH = DIST_THRESH):
 
 if __name__ == "__main__":
 	df = pd.read_csv("AAAI.csv")
-	print(graph_clus(df))
+
+	try:
+		thresh = float(input("Enter threshold: "))
+	except:
+		thresh = DIST_THRESH
+
+	clus = graph_clus(df, thresh)
+	titles = list(df["Title"])
+	clus_names = []
+	for each in clus:       
+	    clus_names.append([])                                        
+	    for every in each:
+	        clus_names[-1].append(titles[every - 1])
+	            
+	count = 1
+
+	for each in clus_names:   
+		print("Cluster no "+str(count)+":" )                         
+		print(each)       
+		print()                                     
+		count+=1
 

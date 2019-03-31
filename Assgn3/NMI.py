@@ -1,9 +1,15 @@
+###########
+# ML Assgn 3
+# Sayan Sinha
+# 16CS10048
+###########
+
 import pandas as pd
 import numpy as np
-import pudb
+# import pudb
 
 df = pd.read_csv("AAAI.csv")
-
+THRESH = 0.15
 import part1
 import part2
 import part3
@@ -50,16 +56,18 @@ def NMI(clus):
 	return 2 * float(I_y_c) / (h_y + h_c)
 
 print("Performing complete hierarchical clustering: ")
-clus_1 = part1_mod.hier_clus(df)
+clus_1 = part1.hier_clus(df)
 NMI_1 = NMI(clus_1)
 print("NMI: "+str(NMI_1)+"\n")
 
 print("Performing single hierarchical clustering: ")
-clus_2 = part1_mod.hier_clus(df, "single")
+clus_2 = part1.hier_clus(df, "single")
 NMI_2 = NMI(clus_2)
 print("NMI: "+str(NMI_2)+"\n")
 
-print("Performing graph clustering (with threshold at 0.1): ")
-clus_3 = part2.graph_clus(df, 0.1)
+print("Performing graph clustering (with threshold at "+str(THRESH)+"): ")
+clus_3 = part2.graph_clus(df, THRESH)
 NMI_3 = NMI(clus_3)
-print("NMI: "+str(NMI_3)+"\n")
+print("\nNMI: "+str(NMI_3)+"\n")
+
+# pu.db
