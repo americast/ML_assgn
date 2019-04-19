@@ -1,7 +1,6 @@
 import numpy as np
 import part1_data
 from copy import copy
-import pudb
 
 
 def init_layers(nn_architecture, seed = 99):
@@ -168,16 +167,22 @@ def update(params_values, grads_values, nn_architecture, learning_rate):
 
     return params_values
 
-def train(train_batch, nn_architecture, epochs, learning_rate):
+def train(train_batch, nn_architecture, epochs, learning_rate, params_values = None):
+    if (params_values == None):
+        params_values = init_layers(nn_architecture, 2)
     params_values = init_layers(nn_architecture, 2)
-    cost_history = []
     accuracy_history = []
-    
+    cost_history_all = []
+    params_values_all = []
+
     for i in range(epochs):
         print(i)
+        cost_history = []
         accuracy_history = []
+        k = 0
         for each in train_batch:
             X = each[0][0]
+            # pu.db
             Y = np.reshape(np.array(each[1]), (1,1))
             Y_hat, cashe = full_forward_propagation(X, params_values, nn_architecture)
             cost = get_cost_value(Y_hat, Y)
@@ -187,13 +192,22 @@ def train(train_batch, nn_architecture, epochs, learning_rate):
             
             grads_values = full_backward_propagation(Y_hat, Y, cashe, params_values, nn_architecture)
             params_values = update(params_values, grads_values, nn_architecture, learning_rate)
-        
-    return params_values, cost_history, accuracy_history
+            # print(params_values == k)
+            # k = copy(params_values)
 
-def train_2(train_batch, nn_architecture, epochs, learning_rate):
-    params_values = init_layers(nn_architecture, 2)
+        # pu.db
+        cost_history_all.append(sum(cost_history) / len(train_batch))
+        # params_values_all.append(k)
+        # k = copy(params_values)
+        # if (i == 1): pu.db
+    return params_values, cost_history_all, accuracy_history
+
+def train_2(train_batch, nn_architecture, epochs, learning_rate, params_values = None):
+    if (params_values == None):
+        params_values = init_layers(nn_architecture, 2)
     accuracy_history = []
     cost_history_all = []
+    params_values_all = []
 
     for i in range(epochs):
         print(i)
@@ -213,6 +227,7 @@ def train_2(train_batch, nn_architecture, epochs, learning_rate):
             params_values = update(params_values, grads_values, nn_architecture, learning_rate)
         # pu.db
         cost_history_all.append(sum(cost_history) / len(train_batch))
+        params_values_all.append(params_values)
         
     return params_values, cost_history_all, accuracy_history
 
@@ -231,7 +246,7 @@ def test_2(batch, nn_architecture, params_values):
         accuracy = get_accuracy_value_2(Y_hat, Y)
         accuracy_history.append(accuracy)
         
-    return cost_history, accuracy_history
+    return sum(cost_history) / len(batch), accuracy_history
 
 
 def test(batch, nn_architecture, params_values):
@@ -249,7 +264,7 @@ def test(batch, nn_architecture, params_values):
         accuracy = get_accuracy_value(Y_hat, Y)
         accuracy_history.append(accuracy)
         
-    return cost_history, accuracy_history
+    return sum(cost_history)/len(batch), accuracy_history
 
 
 if __name__ == "__main__":
@@ -257,6 +272,5 @@ if __name__ == "__main__":
     train_batch, test_batch = prep_data()
     pv, ch, ah = train(train_batch, nn_architecture, 10, 0.1)
     ch_test, ah_test = test(test_batch, nn_architecture, pv)
-    pu.db
     # infer(train_batch)
     # pu.db

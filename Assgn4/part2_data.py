@@ -2,7 +2,6 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.stem.porter import *
 import numpy as np
 from numpy import random
-import pudb
 
 stemmer = PorterStemmer()
 
@@ -93,4 +92,3 @@ if __name__ == "__main__":
 	res, docs_sparse = get_data()
 	mini_batches = data_loader(docs_sparse, res, 1)
 
-	pu.db
