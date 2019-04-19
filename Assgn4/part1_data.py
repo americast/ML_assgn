@@ -1,5 +1,6 @@
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.porter import *
+import numpy as np
 from numpy import random
 import pudb
 
@@ -67,12 +68,12 @@ def get_data():
 
 	for each in docs:
 		# print()
-		each_sparse = [0 for x in range(len(all_words))]
+		each_sparse = [0 for x in range(len(all_words_list))]
 		for e in each:
 			if e in all_words_list:
 				# print(indices[e])
 				each_sparse[indices[e]] = 1
-		docs_sparse.append(each_sparse)
+		docs_sparse.append(np.reshape(np.array(each_sparse), (500, 1)))
 
 	return res, docs_sparse
 
