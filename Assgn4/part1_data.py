@@ -39,6 +39,9 @@ def get_data():
 		if (type_=="spam"):
 			res.append(1)
 		else:
+			prob = random.uniform(0, 1)
+			if (prob > 1):
+				continue
 			res.append(0)
 
 		docs.append(tokens)

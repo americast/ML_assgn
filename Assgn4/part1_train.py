@@ -3,6 +3,9 @@ import part1_data
 from copy import copy
 import pudb
 
+W1 = np.random.randn(500, 100) / 1000000.0
+W2 = np.random.randn(100, 1) / 1000000.0
+
 def prep_data():
 	res, docs_sparse = part1_data.get_data()
 	mini_batches = part1_data.data_loader(docs_sparse, res, 1)
@@ -33,10 +36,11 @@ def CrossEntropy(Y_pred, y):
 	# 	pu.db
 	# print("loss_", loss_)
 	if (str(loss_) == "inf" or str(loss_) == "nan"):
+		print("At CEL")
 		pu.db
 	return loss_
 		
-def forward(X, W1, W2):
+def forward(X, W1, W2, debug=False):
 	hid = np.dot(np.reshape(X, (500)), W1)
 	hid = hid * (hid > 0)
 	# print("hid ", hid)
@@ -45,10 +49,14 @@ def forward(X, W1, W2):
 	y_pred = np.dot(hid,W2)
 	# pu.db
 	# print(hid)
-	if (str(y_pred[0]) == "nan"):
-		print("y_pred is nan")
-		pu.db
+	# if (str(y_pred[0]) == "nan"):
+	# 	print("y_pred is nan")
+	# 	pu.db
 	# print("y_pred[0] ", y_pred[0])
+	if (debug):
+		print("Y_pred inside ", y_pred[0])
+		if y_pred[0] == 0.0:
+			pu.db
 	return hid, sigmoid(y_pred[0])
 
 def back(X, Y_pred, Y, hidden, W1, W2, epoch):
@@ -79,9 +87,8 @@ def back(X, Y_pred, Y, hidden, W1, W2, epoch):
 	# 	pu.db
 
 def train(batch, epochs):
+	global W1, W2
 	hid_layer = np.random.randn(100)
-	W1 = np.random.randn(500, 100) / 1000000.0
-	W2 = np.random.randn(100, 1) / 1000000.0
 	net_loss = 0.0
 
 	for epoch in range(epochs):
@@ -111,7 +118,34 @@ def train(batch, epochs):
 			# pu.db
 		print("loss: ", net_loss)
 
+def infer(batch):
+	global W1, W2
+	num_1s = 0
+	num_tot = 0
+	num_acc = 0
+	for each in batch:
+		num_tot+=1
+		print("\n")
+		X = each[0][0]
+		Y = each[1][0]
+		num_1s+=Y
+
+		_, Y_pred = forward(X, W1, W2)
+		print("Y_pred: ", Y_pred)
+		print("Y_org: ", Y)
+		if Y_pred > 0.5:
+			Y_pred = 1
+		else:
+			Y_pred = 0
+		if (Y == Y_pred):
+			num_acc+=1
+
+	print("num_1s ", num_1s)
+	print("num_tot ", num_tot)
+	print("acc ", num_acc/num_tot)
+
 if __name__ == "__main__":
 	train_batch, test_batch = prep_data()
-	train(train_batch, 100)
+	train(train_batch, 10)
+	infer(train_batch)
 	# pu.db
