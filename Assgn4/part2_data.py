@@ -37,12 +37,12 @@ def get_data():
 		tokens = [stemmer.stem(w) for w in tokens if not w in stop_words] 
 
 		if (type_=="spam"):
-			res.append(1)
+			res.append(np.array([1, 0]))
 		else:
 			prob = random.uniform(0, 1)
-			if (prob > 1):
+			if (prob > 0.2):
 				continue
-			res.append(0)
+			res.append(np.array([0, 1]))
 
 		docs.append(tokens)
 
@@ -87,6 +87,7 @@ def prep_data():
     mini_batch_inf = mini_batches[int(0.8 * len(mini_batches)):]
 
     return mini_batch_train, mini_batch_inf
+
 
 if __name__ == "__main__":
 	res, docs_sparse = get_data()

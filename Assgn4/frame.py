@@ -27,6 +27,11 @@ def sigmoid(Z):
 def relu(Z):
     return np.maximum(0,Z)
 
+def softmax(Z):
+    exps = np.exp(Z)
+    return exps / np.sum(exps, axis =0)
+ 
+
 def sigmoid_backward(dA, Z):
     sig = sigmoid(Z)
     return dA * sig * (1 - sig)
@@ -36,6 +41,14 @@ def relu_backward(dA, Z):
     dZ[Z <= 0] = 0
     return dZ
 
+def softmax_backward(dA, Z):
+    z = np.array(Z, copy= True)
+    z -= np.max(z)
+    s = (np.exp(z).T / np.sum(np.exp(z)))
+    dZ = dA * s.T * (1 - s.T)
+    # pu.db
+    return dZ
+
 def single_layer_forward_propagation(A_prev, W_curr, b_curr, activation="relu"):
     Z_curr = np.dot(W_curr, A_prev) + b_curr
     
@@ -43,6 +56,8 @@ def single_layer_forward_propagation(A_prev, W_curr, b_curr, activation="relu"):
         activation_func = relu
     elif activation is "sigmoid":
         activation_func = sigmoid
+    elif activation is "softmax":
+        activation_func = softmax
     else:
         raise Exception('Non-supported activation function')
         
@@ -70,8 +85,19 @@ def full_forward_propagation(X, params_values, nn_architecture):
 
 def get_cost_value(Y_hat, Y):
     m = Y_hat.shape[1]
-    cost = -1 / m * (np.dot(Y, np.log(Y_hat + 1e-6).T) + np.dot(1 - Y, np.log(1 - Y_hat + 1e-6).T))
+    cost = -1 / m * (np.dot(Y.T, np.log(Y_hat + 1e-6)) + np.dot(1 - Y.T, np.log(1 - Y_hat + 1e-6)))
     return np.squeeze(cost)
+
+def convert_prob_into_class_2(Y):
+    Y_hat_ = np.zeros(Y.T.shape)[0]
+    Y_hat_[np.argmax(Y)] = 1
+    return np.array(Y_hat_)
+    # pu.db
+
+def get_accuracy_value_2(Y_hat, Y):
+    Y_hat_ = convert_prob_into_class_2(Y_hat)
+    # pu.db
+    return (Y_hat_ == np.reshape(Y, (1, 2))).all(axis = 0).mean()
 
 def convert_prob_into_class(Y):
     Y_hat_ = []
@@ -95,6 +121,8 @@ def single_layer_backward_propagation(dA_curr, W_curr, b_curr, Z_curr, A_prev, a
         backward_activation_func = relu_backward
     elif activation is "sigmoid":
         backward_activation_func = sigmoid_backward
+    elif activation is "softmax":
+        backward_activation_func = softmax_backward
     else:
         raise Exception('Non-supported activation function')
     
@@ -162,6 +190,49 @@ def train(train_batch, nn_architecture, epochs, learning_rate):
         
     return params_values, cost_history, accuracy_history
 
+def train_2(train_batch, nn_architecture, epochs, learning_rate):
+    params_values = init_layers(nn_architecture, 2)
+    accuracy_history = []
+    cost_history_all = []
+
+    for i in range(epochs):
+        print(i)
+        cost_history = []
+        accuracy_history = []
+        for each in train_batch:
+            X = each[0][0]
+            # pu.db
+            Y = np.reshape(np.array(each[1]), (2,1))
+            Y_hat, cashe = full_forward_propagation(X, params_values, nn_architecture)
+            cost = get_cost_value(Y_hat, Y)
+            cost_history.append(cost)
+            accuracy = get_accuracy_value_2(Y_hat, Y)
+            accuracy_history.append(accuracy)
+            
+            grads_values = full_backward_propagation(Y_hat, Y, cashe, params_values, nn_architecture)
+            params_values = update(params_values, grads_values, nn_architecture, learning_rate)
+        # pu.db
+        cost_history_all.append(sum(cost_history) / len(train_batch))
+        
+    return params_values, cost_history_all, accuracy_history
+
+def test_2(batch, nn_architecture, params_values):
+    # params_values = init_layers(nn_architecture, 2)
+    cost_history = []
+    accuracy_history = []
+    
+    accuracy_history = []
+    for each in batch:
+        X = each[0][0]
+        Y = np.reshape(np.array(each[1]), (2,1))
+        Y_hat, cashe = full_forward_propagation(X, params_values, nn_architecture)
+        cost = get_cost_value(Y_hat, Y)
+        cost_history.append(cost)
+        accuracy = get_accuracy_value_2(Y_hat, Y)
+        accuracy_history.append(accuracy)
+        
+    return cost_history, accuracy_history
+
 
 def test(batch, nn_architecture, params_values):
     # params_values = init_layers(nn_architecture, 2)
@@ -179,15 +250,6 @@ def test(batch, nn_architecture, params_values):
         accuracy_history.append(accuracy)
         
     return cost_history, accuracy_history
-
-
-def prep_data():
-    res, docs_sparse = part1_data.get_data()
-    mini_batches = part1_data.data_loader(docs_sparse, res, 1)
-    mini_batch_train = mini_batches[:int(0.8 * len(mini_batches))]
-    mini_batch_inf = mini_batches[int(0.8 * len(mini_batches)):]
-
-    return mini_batch_train, mini_batch_inf
 
 
 if __name__ == "__main__":

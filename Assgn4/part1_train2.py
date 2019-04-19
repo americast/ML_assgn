@@ -13,7 +13,7 @@ nn_architecture = [
 
 if __name__ == "__main__":
     # global nn_architecture
-    train_batch, test_batch = frame.prep_data()
+    train_batch, test_batch = part1_data.prep_data()
     pv, ch, ah = frame.train(train_batch, nn_architecture, 10, 0.1)
     ch_test, ah_test = frame.test(test_batch, nn_architecture, pv)
     pu.db
